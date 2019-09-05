@@ -1,0 +1,26 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    volumes:
+      - db-data:/data/db
+    ports:
+      - "27017:27017"
+  graphdb:
+    image: jcm300/clav_graphdb:1.0.2
+    ports:
+      - "7200:7200"
+  server:
+    image: jcm300/clav_api:1.0.1
+    restart: on-failure
+    environment:
+      - SWAGGER_URL=http://localhost:7720
+      - GRAPHDB=graphdb:7200
+      - MONGODB=mongo
+    links:
+      - mongo
+      - graphdb
+    ports:
+      - "7720:7779"
+volumes:
+  db-data:

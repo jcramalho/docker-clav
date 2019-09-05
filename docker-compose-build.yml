@@ -1,0 +1,31 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    volumes:
+      - db-data:/data/db
+    ports:
+      - "27017:27017"
+  graphdb:
+    image: jcm300/clav_graphdb:1.0.2
+    build:
+      context: ./graphdb
+      dockerfile: Dockerfile
+    ports:
+      - "7200:7200"
+  server:
+    image: jcm300/clav_api:1.0.1
+    build:
+      context: ./../CLAV2018/
+      dockerfile: Dockerfile
+    environment:
+      - GRAPHDB=graphdb:7200
+      - MONGODB=mongo
+    restart: on-failure
+    links:
+      - mongo
+      - graphdb
+    ports:
+      - "7779:7779"
+volumes:
+  db-data:
