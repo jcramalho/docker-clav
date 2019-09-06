@@ -11,7 +11,7 @@ services:
     ports:
       - "7200:7200"
   server:
-    image: jcm300/clav_api:1.0.1
+    image: jcm300/clav_api:1.0.2
     restart: on-failure
     environment:
       - SWAGGER_URL=http://localhost:7720
