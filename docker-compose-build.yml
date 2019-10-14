@@ -1,31 +1,44 @@
-version: '3'
+version: '3.5'
 services:
   mongo:
     image: mongo
+    container_name: clav_mongo
+    restart: always
     volumes:
-      - db-data:/data/db
+      - mongodb-data:/data/db
     ports:
       - "27017:27017"
   graphdb:
-    image: jcm300/clav_graphdb:1.0.3
+    image: jcm300/clav_graphdb:1.0.4
+    container_name: clav_graphdb
     build:
       context: ./graphdb
       dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - graphdb-data:/opt/graphdb/home/data/repositories
     ports:
       - "7200:7200"
   server:
-    image: jcm300/clav_api:1.0.3
+    image: jcm300/clav_api:1.0.4
+    container_name: clav_server
     build:
       context: ./../CLAV2018/
       dockerfile: Dockerfile
+    restart: always
     environment:
+      - SWAGGER_URL=http://localhost:7720
       - GRAPHDB=graphdb:7200
       - MONGODB=mongo
-    restart: on-failure
     links:
       - mongo
       - graphdb
     ports:
       - "7779:7779"
 volumes:
-  db-data:
+  mongodb-data:
+    external: false
+    name: clav-mongodb-data
+  graphdb-data:
+    external: false
+    name: clav-graphdb-data
