@@ -27,7 +27,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      - SWAGGER_URL=http://localhost:7720
+      - SWAGGER_URL=http://localhost:7779
       - GRAPHDB=graphdb:7200
       - MONGODB=mongo
     links:
