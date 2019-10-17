@@ -10,7 +10,7 @@
 In order to build the images you need to do first:
 - Download a GraphDB zip version (http://graphdb.ontotext.com/) and put them in the graphdb folder (ex: graphdb-free-8.11.0-dist.zip)
 - Change the GraphDB used version in Dockerfile file inside the graphdb folder (ex: free-8.11.0)
-- Clone/download the CLAV2018 rep (https://github.com/jcramalho/CLAV2018) and place it in the same folder as the docker-clav folder.
+- Clone/download the CLAV2018 repository (https://github.com/jcramalho/CLAV2018) and place it in the same folder as the docker-clav folder.
 
 Then you only need to run `docker-compose -f docker-compose-build.yml up`
 
