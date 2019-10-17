@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk
 
-ARG version=8.11.0
+ARG version=free-8.11.0
 ARG dataFile=clav-2019-10-16-false.ttl
 
 ENV GRAPHDB_PARENT_DIR=/opt/graphdb
@@ -10,7 +10,7 @@ ENV GRAPHDB_INSTALL_DIR=${GRAPHDB_PARENT_DIR}/dist
 
 ENV CLAV=${GRAPHDB_HOME}/data/repositories/CLAV
 
-ADD graphdb-free-${version}-dist.zip /tmp
+ADD graphdb-${version}-dist.zip /tmp
 
 RUN mkdir -p ${GRAPHDB_PARENT_DIR} && \
     cd ${GRAPHDB_PARENT_DIR} && \
