@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk
 
 ARG version=free-8.11.0
-ARG dataFile=clav-2019-10-31-false.ttl
+ARG dataFile=clav-2019-11-06-false.ttl
 
 ENV GRAPHDB_PARENT_DIR=/opt/graphdb
 ENV GRAPHDB_HOME=${GRAPHDB_PARENT_DIR}/home
