@@ -7,13 +7,13 @@ services:
     volumes:
       - mongodb-data:/data/db
   graphdb:
-    image: jcm300/clav_graphdb:1.0.5
+    image: jcm300/clav_graphdb:1.0.6
     container_name: clav_graphdb
     restart: always
     volumes:
       - graphdb-data:/opt/graphdb/home/data/repositories
   server:
-    image: jcm300/clav_api:1.0.5
+    image: jcm300/clav_api:1.0.6
     container_name: clav_server
     restart: always
     environment:
@@ -23,7 +23,7 @@ services:
     ports:
       - "7779:7779"
   interface:
-    image: jcm300/clav_interface:1.0.5
+    image: jcm300/clav_interface:1.0.6
     container_name: clav_interface
     restart: always
     environment:
