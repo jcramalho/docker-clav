@@ -6,8 +6,6 @@ services:
     restart: always
     volumes:
       - mongodb-data:/data/db
-    ports:
-      - "27017:27017"
   graphdb:
     image: jcm300/clav_graphdb:1.0.5
     container_name: clav_graphdb
@@ -17,8 +15,6 @@ services:
     restart: always
     volumes:
       - graphdb-data:/opt/graphdb/home/data/repositories
-    ports:
-      - "7200:7200"
   server:
     image: jcm300/clav_api:1.0.5
     container_name: clav_server
@@ -30,11 +26,29 @@ services:
       - SWAGGER_URL=http://localhost:7779
       - GRAPHDB=graphdb:7200
       - MONGODB=mongo
-    links:
-      - mongo
-      - graphdb
     ports:
       - "7779:7779"
+  interface:
+    image: jcm300/clav_interface:1.0.5
+    container_name: clav_interface
+    build:
+      context: ./../CLAV2019/
+      dockerfile: Dockerfile_UX_only
+    restart: always
+    environment:
+      - API_URL=server:7779
+  nginx:
+    image: nginx
+    container_name: clav_nginx
+    restart: always
+    volumes:
+      - ${PWD}/nginx-template.conf:/etc/nginx/nginx.conf.template
+    environment:
+      - SERVER_URL=http://server:7779
+      - INTERFACE_URL=http://interface:7780
+    ports:
+      - "8080:8080"
+    command: /bin/bash -c "envsubst '$$SERVER_URL $$INTERFACE_URL' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
 volumes:
   mongodb-data:
     external: false
