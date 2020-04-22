@@ -1,56 +1,78 @@
 version: '3.5'
 services:
   mongo:
-    image: mongo
+    image: mongo:4.2
     container_name: clav_mongo
     restart: always
     volumes:
       - mongodb-data:/data/db
   graphdb:
-    image: jcm300/clav_graphdb:1.0.7
+    image: ${GRAPHDB_IMG}
     container_name: clav_graphdb
     build:
       context: ./graphdb
       dockerfile: Dockerfile
+      args:
+        - version=${GRAPHDB_VERSION}
+        - dataFile=${GRAPHDB_DATA_FILE}
     restart: always
     volumes:
       - graphdb-data:/opt/graphdb/home/data/repositories
   server:
-    image: jcm300/clav_api:1.0.7
+    image: ${SERVER_IMG}
     container_name: clav_server
     build:
       context: ./../CLAV2018/
       dockerfile: Dockerfile
     restart: always
     environment:
-      - SWAGGER_URL=http://localhost:7779
+      - NODE_ENV=production
+      - SWAGGER_URL=${SWAGGER_URL}
       - GRAPHDB=graphdb:7200
       - MONGODB=mongo
-      - API_VERSION=v2
-    ports:
-      - "7779:7779"
-  interface:
-    image: jcm300/clav_interface:1.0.7
-    container_name: clav_interface
-    build:
-      context: ./../CLAV2019/
-      dockerfile: Dockerfile_UX_only
-    restart: always
-    environment:
-      - API_URL=server:7779
+      - API_VERSION=${API_VERSION}
+      - INTERFACE_HOSTS=${INTERFACE_HOSTS}
   nginx:
     image: nginx
     container_name: clav_nginx
     restart: always
-    volumes:
-      - ${PWD}/nginx-template.conf:/etc/nginx/nginx.conf.template
     environment:
       - SERVER_URL=http://server:7779
-      - INTERFACE_URL=http://interface:7780
-      - API_VERSION=v2
+      - CERTS=${CERT_FOLDER}
+    volumes:
+      - ${PWD}/nginxAPI.conf.template:/etc/nginx/nginx.conf.template
+      - ${PWD}/beforeStart.sh:/beforeStart.sh
+      - ${PWD}/afterStart.sh:/afterStart.sh
+      - acme-data:${ACME_FOLDER}
+      - crontabs:/var/spool/cron/crontabs/
+    command: /bin/bash -c "/beforeStart.sh ${CERT_FOLDER} && envsubst '$$SERVER_URL $$CERTS' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && (nginx -g 'daemon off;' &) && /afterStart.sh -c ${CERT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS_SERVER} && tail -f /dev/null"
     ports:
-      - "8080:8080"
-    command: /bin/bash -c "envsubst '$$API_VERSION $$SERVER_URL $$INTERFACE_URL' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+      - "${HTTP_SERVER_PORT}:7777"
+      - "${HTTPS_SERVER_PORT}:7778"
+  interface:
+    image: ${INTERFACE_IMG}
+    container_name: interface
+    build:
+      context: ./../CLAV2019/
+      dockerfile: Dockerfile
+      args:
+        - VUE_APP_API_URL=${API_URL}
+        - VUE_APP_API_VERSION=${API_VERSION}
+    restart: always
+    environment:
+      - SERVER_URL=${SERVER_URL}
+      - CERTS=${CERT_FOLDER}
+      - API_VERSION=${API_VERSION}
+    volumes:
+      - ${PWD}/${NGINX_FILE}:/etc/nginx/nginx.conf.template
+      - ${PWD}/beforeStart.sh:/beforeStart.sh
+      - ${PWD}/afterStart.sh:/afterStart.sh
+      - acme-interface-data:${ACME_FOLDER}
+      - crontabs-interface:/var/spool/cron/crontabs/
+    command: /bin/bash -c "/beforeStart.sh ${CERT_FOLDER} && envsubst '$$SERVER_URL $$CERTS $$API_VERSION' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && (nginx -g 'daemon off;' &) && /afterStart.sh -c ${CERT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS_INTERFACE} && tail -f /dev/null"
+    ports:
+      - "${HTTP_INTERFACE_PORT}:7779"
+      - "${HTTPS_INTERFACE_PORT}:7780"
 volumes:
   mongodb-data:
     external: false
@@ -58,3 +80,15 @@ volumes:
   graphdb-data:
     external: false
     name: clav-graphdb-data
+  acme-data:
+    external: false
+    name: acme-data
+  crontabs:
+    external: false
+    name: crontabs
+  acme-interface-data:
+    external: false
+    name: acme-interface-data
+  crontabs-interface:
+    external: false
+    name: crontabs-interface

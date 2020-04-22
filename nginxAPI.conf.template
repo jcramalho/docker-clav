@@ -1,0 +1,75 @@
+user  nginx;
+worker_processes  auto;
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+events {
+  worker_connections  1024;
+}
+http {
+  include       /etc/nginx/mime.types;
+  default_type  application/octet-stream;
+  log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+  access_log  /var/log/nginx/access.log  main;
+  sendfile        on;
+  keepalive_timeout  65;
+
+  ssl_prefer_server_ciphers on;
+  ssl_session_cache   shared:SSL:10m;
+  ssl_session_timeout 10m;
+
+  #redirect HTTP to HTTPS
+  server {
+    listen 7777;
+    server_name localhost;
+
+    location /.well-known/acme-challenge/ {
+      alias /var/www/html/.well-known/acme-challenge/;
+    }
+
+    location / {
+      return 301 https://$host$request_uri;
+    }
+  }
+
+  server {
+    listen 7778 ssl http2;
+    server_name localhost;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:ECDHE-RSA-AES128-GCM-SHA256:AES256+EECDH:DHE-RSA-AES128-GCM-SHA256:AES256+EDH:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
+
+    ssl_certificate $CERTS/fullchain.pem;
+    ssl_certificate_key $CERTS/key.pem;
+
+    #stronger DHE parameter
+    ssl_dhparam $CERTS/dhparam.pem;
+    ssl_ecdh_curve secp384r1;
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
+
+    # Security headers
+    # none (node is using helmet)
+
+    location / {
+      proxy_pass $SERVER_URL;
+      proxy_set_header Origin $http_origin;
+    }
+
+    # redirect not found pages to the static page /404.html
+    error_page  404  /404.html;
+    location = /404.html {
+      root   /usr/share/nginx/html;
+    }
+
+    # redirect server error pages to the static page /50x.html
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+      root   /usr/share/nginx/html;
+    }
+  }
+}
