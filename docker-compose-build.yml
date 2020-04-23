@@ -32,23 +32,6 @@ services:
       - MONGODB=mongo
       - API_VERSION=${API_VERSION}
       - INTERFACE_HOSTS=${INTERFACE_HOSTS}
-  nginx:
-    image: nginx
-    container_name: clav_nginx
-    restart: always
-    environment:
-      - SERVER_URL=http://server:7779
-      - CERTS=${CERT_FOLDER}
-    volumes:
-      - ${PWD}/nginxAPI.conf.template:/etc/nginx/nginx.conf.template
-      - ${PWD}/beforeStart.sh:/beforeStart.sh
-      - ${PWD}/afterStart.sh:/afterStart.sh
-      - acme-data:${ACME_FOLDER}
-      - crontabs:/var/spool/cron/crontabs/
-    command: /bin/bash -c "/beforeStart.sh ${CERT_FOLDER} && envsubst '$$SERVER_URL $$CERTS' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && (nginx -g 'daemon off;' &) && /afterStart.sh -c ${CERT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS_SERVER} && tail -f /dev/null"
-    ports:
-      - "${HTTP_SERVER_PORT}:7777"
-      - "${HTTPS_SERVER_PORT}:7778"
   interface:
     image: ${INTERFACE_IMG}
     container_name: interface
@@ -60,19 +43,22 @@ services:
         - VUE_APP_API_VERSION=${API_VERSION}
     restart: always
     environment:
-      - SERVER_URL=${SERVER_URL}
-      - CERTS=${CERT_FOLDER}
+      - SERVER_URL=http://server:7779
+      - CERTS_API=${CERT_API_FOLDER}
+      - CERTS_INT=${CERT_INT_FOLDER}
       - API_VERSION=${API_VERSION}
+      - DOMAINS_SERVER=${DOMAINS_SERVER}
+      - DOMAINS_INTERFACE=${DOMAINS_INTERFACE}
     volumes:
       - ${PWD}/${NGINX_FILE}:/etc/nginx/nginx.conf.template
       - ${PWD}/beforeStart.sh:/beforeStart.sh
       - ${PWD}/afterStart.sh:/afterStart.sh
-      - acme-interface-data:${ACME_FOLDER}
-      - crontabs-interface:/var/spool/cron/crontabs/
-    command: /bin/bash -c "/beforeStart.sh ${CERT_FOLDER} && envsubst '$$SERVER_URL $$CERTS $$API_VERSION' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && (nginx -g 'daemon off;' &) && /afterStart.sh -c ${CERT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS_INTERFACE} && tail -f /dev/null"
+      - acme-data:${ACME_FOLDER}
+      - crontabs:/var/spool/cron/crontabs/
+    command: /bin/bash -c "/beforeStart.sh ${CERT_API_FOLDER} && /beforeStart.sh ${CERT_INT_FOLDER} && envsubst '$$SERVER_URL $$CERTS_API $$CERTS_INT $$API_VERSION $$DOMAINS_SERVER $$DOMAINS_INTERFACE' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && (nginx -g 'daemon off;' &) && /afterStart.sh -c ${CERT_API_FOLDER} -a ${ACME_FOLDER} ${DOMAINS_SERVER} && /afterStart.sh -c ${CERT_INT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS_INTERFACE} && tail -f /dev/null"
     ports:
-      - "${HTTP_INTERFACE_PORT}:7779"
-      - "${HTTPS_INTERFACE_PORT}:7780"
+      - "${HTTP_PORT}:7779"
+      - "${HTTPS_PORT}:7780"
 volumes:
   mongodb-data:
     external: false
@@ -86,9 +72,3 @@ volumes:
   crontabs:
     external: false
     name: crontabs
-  acme-interface-data:
-    external: false
-    name: acme-interface-data
-  crontabs-interface:
-    external: false
-    name: crontabs-interface
