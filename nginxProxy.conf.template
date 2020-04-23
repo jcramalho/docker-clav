@@ -108,7 +108,7 @@ http {
       add_header X-Download-Options noopen;
       add_header X-Content-Type-Options nosniff;
       add_header X-XSS-Protection "1; mode=block";
-      add_header Content-Security-Policy "default-src 'self' $SERVER_URL; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' https://fonts.gstatic.com;";
+      add_header Content-Security-Policy "default-src 'self' $DOMAINS_SERVER; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' https://fonts.gstatic.com;";
 
       root   /app;
       index  index.html;
