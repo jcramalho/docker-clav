@@ -1,0 +1,124 @@
+_format_version: "1.1"
+
+services:
+  - name: acme-dummy
+    url: http://127.0.0.1:65535
+    routes:
+      - name: acme-dummy
+        paths:
+          - /.well-known/acme-challenge
+  - name: API
+    url: http://192.168.1.68:7779
+    routes:
+      - name: TodasRotas
+        protocols:
+          - https
+        #redireciona http para https
+        https_redirect_status_code: 301
+        paths:
+          - /
+    plugins:
+      - name: external-auth
+        config:
+          url: http://192.168.1.68:7778
+          path: /auth
+      - name: cors
+        service: API
+        config: 
+          origins:
+            - '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+            - OPTIONS
+          headers:
+            - Accept
+            - Authorization
+            - Cache-Control
+            - Content-Type
+            - DNT
+            - If-Modified-Since
+            - Keep-Alive
+            - Origin
+            - User-Agent
+            - X-Requested-With
+            - Content-Length
+          credentials: true
+      #é possível limitar por rota, basta associar o plugin a uma rota
+      - name: rate-limiting
+        config:
+          second: 10
+          policy: local
+      #faz cache de pedidos 200, 301 e 404, e verbos GET, HEAD em que a resposta é text/plain ou application/json
+      - name: proxy-cache
+        config:
+          cache_ttl: 30 #segundos em cache
+          strategy: memory
+      - name: response-transformer
+        config:
+          remove:
+            headers:
+              - strict-transport-security
+              - x-dns-prefetch-control
+              - x-frame-options
+              - x-download-options
+              - x-content-type-options
+              - x-xss-protection
+              - x-powered-by
+              - content-security-policy
+          add:
+            headers:
+              - 'Strict-Transport-Security: "max-age=31536000; includeSubDomains; preload"'
+              - 'X-DNS-Prefetch-Control: off'
+              - 'X-Frame-Options: SAMEORIGIN'
+              - 'X-Download-Options: noopen'
+              - 'X-Content-Type-Options: nosniff'
+              - 'X-XSS-Protection: "1; mode=block"'
+              - "Content-Security-Policy: default-src 'none'"
+
+routes:
+  - name: docs
+    service: API
+    strip_path: false
+    #redireciona http para https
+    https_redirect_status_code: 301
+    protocols:
+      - https
+    paths:
+      - /$API_VERSION/docs
+    methods:
+      - GET
+    plugins:
+      - name: response-transformer
+        config:
+          remove:
+            headers:
+              - strict-transport-security
+              - x-dns-prefetch-control
+              - x-frame-options
+              - x-download-options
+              - x-content-type-options
+              - x-xss-protection
+              - x-powered-by
+              - content-security-policy
+          add:
+            headers:
+              - 'Strict-Transport-Security: "max-age=31536000; includeSubDomains; preload"'
+              - 'X-DNS-Prefetch-Control: off'
+              - 'X-Frame-Options: SAMEORIGIN'
+              - 'X-Download-Options: noopen'
+              - 'X-Content-Type-Options: nosniff'
+              - 'X-XSS-Protection: "1; mode=block"'
+              - "Content-Security-Policy: default-src 'self' $DOMAINS; img-src 'self' https://validator.swagger.io data: $DOMAINS; style-src 'self' 'unsafe-inline' $DOMAINS; script-src 'self' 'unsafe-inline' $DOMAINS"
+
+plugins:
+  - name: acme
+    config:
+      account_email: $EMAIL
+      domains: $DOMAINS_LIST 
+      renew_threshold_days: 15
+      storage: shm
+      tos_accepted: true
