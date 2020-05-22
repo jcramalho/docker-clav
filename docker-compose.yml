@@ -33,10 +33,17 @@ services:
       - NODE_ENV=production
       - API_VERSION=${API_VERSION}
       - API_HOST=server:7779
+  redis:
+    image: redis:6.0
+    container_name: clav_redis
+    restart: always
+    volumes:
+      - acme-data:/data
   kong:
     image: kong:2.0.4-ubuntu
     container_name: clav_kong
     restart: always
+    user: root
     environment:
       - DOMAINS=${DOMAINS}
       - EMAIL=${EMAIL}
@@ -54,8 +61,7 @@ services:
       - ${PWD}/kong/kong.yml.template:/usr/local/kong/declarative/kong.yml.template
       - ${PWD}/beforeStart.sh:/beforeStart.sh
       - ${PWD}/afterStart.sh:/afterStart.sh
-      - acme-data:/acme
-    command: /bin/bash -c "/beforeStart.sh && envsubst '$$API_VERSION $$DOMAINS $$EMAIL $$DOMAINS_LIST' < /usr/local/kong/declarative/kong.yml.template > /usr/local/kong/declarative/kong.yml && (kong docker-start &) && afterStart.sh && tail -f /dev/null"
+    command: /bin/bash -c "/beforeStart.sh && envsubst '$$API_VERSION $$DOMAINS $$EMAIL $$DOMAINS_LIST $$API_HOST $$SERVER_AUTH_HOST' < /usr/local/kong/declarative/kong.yml.template > /usr/local/kong/declarative/kong.yml && su - kong && (kong start &) && /afterStart.sh && tail -f /dev/null"
 volumes:
   mongodb-data:
     external: false

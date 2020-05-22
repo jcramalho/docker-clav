@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt-get update && apt-get install -y openssl git
+apt-get update && apt-get install -y openssl git gettext
 
 #gen dhparam
 openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
@@ -17,3 +17,4 @@ do
 done
 
 export DOMAINS_LIST=$domains_list
+ulimit -n 4096

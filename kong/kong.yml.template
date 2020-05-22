@@ -120,7 +120,5 @@ plugins:
       account_email: $EMAIL
       domains: $DOMAINS_LIST 
       renew_threshold_days: 15
-      storage: file
-      storage_config:
-        dir: /acme
+      storage: redis
       tos_accepted: true
