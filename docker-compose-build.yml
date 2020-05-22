@@ -60,8 +60,8 @@ services:
       - DOMAINS=${DOMAINS}
       - EMAIL=${EMAIL}
       - API_VERSION=${API_VERSION}
-      - API_HOST=server:7779
-      - SERVER_AUTH_HOST=clav_auth:7778
+      - API_HOST=http://server:7779
+      - SERVER_AUTH_HOST=http://clav_auth:7778
     ports:
       - ${HTTP_PORT}:8000
       - ${HTTPS_PORT}:8443
@@ -73,7 +73,8 @@ services:
       - ${PWD}/kong/kong.yml.template:/usr/local/kong/declarative/kong.yml.template
       - ${PWD}/beforeStart.sh:/beforeStart.sh
       - ${PWD}/afterStart.sh:/afterStart.sh
-    command: /bin/bash -c "/beforeStart.sh && envsubst '$$API_VERSION $$DOMAINS $$EMAIL $$DOMAINS_LIST $$API_HOST $$SERVER_AUTH_HOST' < /usr/local/kong/declarative/kong.yml.template > /usr/local/kong/declarative/kong.yml && su - kong && (kong start &) && /afterStart.sh && tail -f /dev/null"
+      - ${PWD}/wait-for-it.sh:/wait-for-it.sh
+    command: /bin/bash -c "/wait-for-it.sh clav-auth:7778 -- /wait-for-it.sh clav-server:7779 -- /beforeStart.sh && envsubst '$$API_VERSION $$DOMAINS $$EMAIL $$DOMAINS_LIST $$API_HOST $$SERVER_AUTH_HOST' < /usr/local/kong/declarative/kong.yml.template > /usr/local/kong/declarative/kong.yml && su - kong && (kong start &) && sleep 10 && /afterStart.sh && tail -f /dev/null"
 volumes:
   mongodb-data:
     external: false
