@@ -44,6 +44,10 @@ services:
     container_name: clav_kong
     restart: always
     user: root
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 4096
     environment:
       - DOMAINS=${DOMAINS}
       - EMAIL=${EMAIL}

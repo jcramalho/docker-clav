@@ -122,8 +122,9 @@ plugins:
       renew_threshold_days: 15
       storage: redis
       storage_config:
-        auth: null
-        port: 6379
-        database": 0
-        host: $REDIS_HOST
+        redis:
+          auth: null
+          port: 6379
+          database: 0
+          host: $REDIS_HOST
       tos_accepted: true
