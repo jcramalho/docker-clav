@@ -35,8 +35,8 @@ services:
       - INTERFACE_HOSTS=${INTERFACE_HOSTS}
       - SERVER_AUTH_HOST=clav_auth:7778
   clav-auth:
-    image: ${SERVER_IMG}
-    container_name: clav_server
+    image: ${SERVER_AUTH_IMG}
+    container_name: clav_auth
     build:
       context: ./CLAV-auth
       dockerfile: Dockerfile
@@ -62,10 +62,10 @@ services:
       # 8001:8001
       # 8444:8444
     volumes:
-      - $(pwd)/kong/kong.conf:/etc/kong/kong.conf
-      - $(pwd)/kong/kong.yml.template:/usr/local/kong/declarative/kong.yml.template
-      - ${pwd}/beforeStart.sh:/beforeStart.sh
-      - ${pwd}/afterStart.sh:/afterStart.sh
+      - ${PWD}/kong/kong.conf:/etc/kong/kong.conf
+      - ${PWD}/kong/kong.yml.template:/usr/local/kong/declarative/kong.yml.template
+      - ${PWD}/beforeStart.sh:/beforeStart.sh
+      - ${PWD}/afterStart.sh:/afterStart.sh
       - acme-data:/acme
     command: /bin/bash -c "/beforeStart.sh && envsubst '$$API_VERSION $$DOMAINS $$EMAIL $$DOMAINS_LIST' < /usr/local/kong/declarative/kong.yml.template > /usr/local/kong/declarative/kong.yml && (kong docker-start &) && afterStart.sh && tail -f /dev/null"
 volumes:
