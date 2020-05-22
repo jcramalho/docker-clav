@@ -1,15 +1,19 @@
 #!/bin/bash
 
-CERTS_FOLDER=${1:-/etc/nginx/acme.sh}
+apt-get update && apt-get install -y openssl git
 
-if [ ! -d $CERTS_FOLDER ]; then
-    mkdir -p $CERTS_FOLDER
-fi
+#gen dhparam
+openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 
-apt-get update && apt-get install -y openssl sudo
+#install external-auth plugin
+luarocks install --server=https://luarocks.org/manifests/jcm300 external-auth
 
-#gen a self-signed certificate only to boot nginx
-openssl req -batch -sha256 -x509 -nodes -days 1 -subj "/C=PT/ST=Denial/L=Portugal/O=CLAV/CN=localhost" -newkey rsa:2048 -keyout $CERTS_FOLDER/key.pem -out $CERTS_FOLDER/fullchain.pem
+#gen domains list for kong db-less declarative config
+domains_list=""
+for domain in $DOMAINS
+do
+    domains_list+=$'\n        - '
+    domains_list+=$domain
+done
 
-#gen dhparam example, only to boot nginx
-openssl dhparam -out $CERTS_FOLDER/dhparam.pem 1024
+export DOMAINS_LIST=$domains_list

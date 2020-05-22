@@ -8,7 +8,7 @@ services:
         paths:
           - /.well-known/acme-challenge
   - name: API
-    url: http://192.168.1.68:7779
+    url: ${API_HOST}
     routes:
       - name: TodasRotas
         protocols:
@@ -20,7 +20,7 @@ services:
     plugins:
       - name: external-auth
         config:
-          url: http://192.168.1.68:7778
+          url: ${SERVER_AUTH_HOST}
           path: /auth
       - name: cors
         service: API
@@ -120,5 +120,7 @@ plugins:
       account_email: $EMAIL
       domains: $DOMAINS_LIST 
       renew_threshold_days: 15
-      storage: shm
+      storage: file
+      storage_config:
+        dir: /acme
       tos_accepted: true
