@@ -50,6 +50,7 @@ services:
       - API_VERSION=${API_VERSION}
       - API_HOST=http://server:7779
       - SERVER_AUTH_HOST=http://clav_auth:7778
+      - REDIS_HOST=redis
     ports:
       - ${HTTP_PORT}:8000
       - ${HTTPS_PORT}:8443
@@ -62,7 +63,7 @@ services:
       - ${PWD}/beforeStart.sh:/beforeStart.sh
       - ${PWD}/afterStart.sh:/afterStart.sh
       - ${PWD}/wait-for-it.sh:/wait-for-it.sh
-    command: /bin/bash -c "/wait-for-it.sh clav-auth:7778 -- /wait-for-it.sh clav-server:7779 -- /beforeStart.sh && envsubst '$$API_VERSION $$DOMAINS $$EMAIL $$DOMAINS_LIST $$API_HOST $$SERVER_AUTH_HOST' < /usr/local/kong/declarative/kong.yml.template > /usr/local/kong/declarative/kong.yml && su - kong && (kong start &) && sleep 10 && /afterStart.sh && tail -f /dev/null"
+    command: /bin/bash -c "/wait-for-it.sh clav-auth:7778 -- /wait-for-it.sh clav-server:7779 -- /beforeStart.sh && su - kong && (kong start &) && sleep 10 && /afterStart.sh && tail -f /dev/null"
 volumes:
   mongodb-data:
     external: false
