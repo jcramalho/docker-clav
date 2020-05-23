@@ -2,7 +2,9 @@ restore(){
     docker run --rm -v $1:$2 -v $(pwd):/backup ubuntu bash -c "cd $2 && tar xvf /backup/$3.tar"
 }
 
-docker stop clav_nginx
+docker stop clav_kong
+docker stop clav_redis
+docker stop clav_auth
 docker stop clav_server
 
 docker stop clav_graphdb
@@ -14,4 +16,6 @@ restore clav-mongodb-data /data/db clav_mongo
 docker start clav_mongo
 
 docker start clav_server
-docker start clav_nginx
+docker start clav_auth
+docker start clav_redis
+docker start clav_kong
