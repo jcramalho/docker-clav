@@ -3,10 +3,12 @@
 #flags
 no_cron=false
 folder=$(pwd)
-while getopts ":nf:" o; do
+domain="*"
+while getopts ":nf:d:" o; do
     case "${o}" in
         n) no_cron=true;;
         f) folder=${OPTARG};;
+        d) domain=${OPTARG};;
         *) exit 0 ;;
     esac
 done
@@ -17,7 +19,8 @@ if ! [ -x "$(command -v jq)" ]; then
 fi
 
 #get raw certificates
-json=$(docker exec -i clav_redis redis-cli <<<$'auth redisPass123\nGET "kong_acme:cert_key:clav-api5.ddns.net"')
+comm="auth redisPass123\nGET kong_acme:cert_key:${domain}"
+json=$(echo -e "$comm" | docker exec -i clav_redis redis-cli)
 json=${json:3:${#json}}
 
 #parsing and writing certificates
@@ -33,6 +36,6 @@ if [ $no_cron = false ]; then
         apt-get install -y cron
     fi
 
-    line="10 0 * * * $(pwd)/getCerts.sh -n -f $folder >> /var/log/getCerts.log 2>&1"
+    line="10 0 * * * $(pwd)/getCerts.sh -n -f $folder -d $domain >> /var/log/getCerts.log 2>&1"
     (crontab -l; echo "$line" ) | crontab -
 fi
