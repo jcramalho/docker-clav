@@ -8,6 +8,17 @@ usage(){
     echo "    -h                Help"
 }
 
+missJQ(){
+    echo "ERROR: Missing dependency jq..."
+    exit 1
+}
+
+missCrontab(){
+    echo "ERROR: Missing dependency crontab."
+    echo "       Cronjob not inserted. This script will not run periodically."
+    exit 1
+}
+
 #flags
 no_cron=false
 folder=$(pwd)
@@ -30,13 +41,16 @@ if [ -z "$domain" ]; then
     exit 1
 fi
 
-#install dependency if necessary
+#install dependency if necessary (ubuntu only)
 if ! [ -x "$(command -v jq)" ]; then
     if ! [ -x "$(command -v apt-get)" ]; then
-        echo "ERROR: Missing dependency jq..."
-        exit 1
+        missJQ
     else
-	    apt-get install -y jq
+	    sudo apt-get install -y jq
+    fi
+
+    if ! [ -x "$(command -v jq)" ]; then
+        missJQ
     fi
 fi
 
@@ -53,14 +67,16 @@ parsed=$(echo $json | jq -r '.cert')
 echo "$parsed" > $folder/fullchain.pem
 
 if [ $no_cron = false ]; then
-    #install dependency if necessary
+    #install dependency if necessary (ubuntu only)
     if ! [ -x "$(command -v crontab)" ]; then
         if ! [ -x "$(command -v apt-get)" ]; then
-            echo "ERROR: Missing dependency crontab."
-            echo "       Cronjob not inserted. This script will not run periodically."
-            exit 1
+            missCrontab
         else
-            apt-get install -y cron
+            sudo apt-get install -y cron
+        fi
+
+        if ! [ -x "$(command -v crontab)" ]; then
+            missCrontab
         fi
     fi
 
