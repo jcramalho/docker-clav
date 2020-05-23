@@ -118,7 +118,7 @@ plugins:
   - name: acme
     config:
       account_email: $EMAIL
-      domains: $DOMAINS_LIST 
+      domains: $DOMAINS_LIST
       renew_threshold_days: 15
       storage: redis
       storage_config:

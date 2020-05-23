@@ -33,7 +33,7 @@ services:
       - MONGODB=mongo
       - API_VERSION=${API_VERSION}
       - INTERFACE_HOSTS=${INTERFACE_HOSTS}
-      - SERVER_AUTH_HOST=clav-auth:7778
+      - SERVER_AUTH_HOST=http://clav-auth:7778
   clav-auth:
     image: ${SERVER_AUTH_IMG}
     container_name: clav_auth
@@ -44,7 +44,7 @@ services:
     environment:
       - NODE_ENV=production
       - API_VERSION=${API_VERSION}
-      - API_HOST=server:7779
+      - API_HOST=http://server:7779
   redis:
     image: redis:6.0
     container_name: clav_redis
