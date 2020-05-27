@@ -55,7 +55,7 @@ services:
       #faz cache de pedidos 200, 301 e 404, e verbos GET, HEAD em que a resposta é text/plain ou application/json
       - name: proxy-cache
         config:
-          cache_ttl: 30 #segundos em cache
+          cache_ttl: 3600 #segundos (1h) em cache
           strategy: memory
       - name: response-transformer
         config:
