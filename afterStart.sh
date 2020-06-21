@@ -5,3 +5,5 @@ for domain in $DOMAINS
 do
     curl https://$domain -k
 done
+
+echo "KONG STARTED WITH SUCCESS"

@@ -18,5 +18,5 @@ done
 
 export DOMAINS_LIST=$domains_list
 
-#crete final db-less declarative config
+#create final db-less declarative config
 envsubst '$$API_VERSION $$DOMAINS $$EMAIL $$DOMAINS_LIST $$API_HOST $$SERVER_AUTH_HOST $$REDIS_HOST' < /usr/local/kong/declarative/kong.yml.template > /usr/local/kong/declarative/kong.yml
