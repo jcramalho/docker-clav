@@ -1,0 +1,78 @@
+version: '3.5'
+services:
+  mongo:
+    image: mongo:4.2
+    container_name: clav_mongo
+    restart: always
+    volumes:
+      - mongodb-data:/data/db
+  graphdb:
+    image: ${GRAPHDB_IMG}
+    container_name: clav_graphdb
+    build:
+      context: ./graphdb
+      dockerfile: Dockerfile
+      args:
+        - version=${GRAPHDB_VERSION}
+        - dataFile=${GRAPHDB_DATA_FILE}
+    restart: always
+    volumes:
+      - graphdb-data:/opt/graphdb/home/data/repositories
+  server:
+    image: node:latest
+    container_name: clav_server
+    restart: always
+    volumes:
+      - ${PWD}/CLAV2018:/server
+    working_dir: /server
+    command: bash -c '[ -d "node_modules" ] && npm run start || npm i && npm run start'
+    environment:
+      - GRAPHDB=graphdb:7200
+      - MONGODB=mongo
+      - API_VERSION=${API_VERSION}
+      - SERVER_AUTH_HOST=http://clav-auth:7778
+  clav-auth:
+    image: node:latest
+    container_name: clav_auth
+    restart: always
+    volumes:
+      - ${PWD}/CLAV-auth:/server
+    working_dir: /server
+    command: bash -c '[ -d "node_modules" ] && npm run start || npm i && npm run start'
+    environment:
+      - NODE_ENV=development
+      - API_VERSION=${API_VERSION}
+      - API_HOST=http://server:7779
+  kong:
+    image: kong:2.0.4-ubuntu
+    container_name: clav_kong
+    restart: always
+    user: root
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 4096
+    environment:
+      - NODE_ENV=development
+      - API_VERSION=${API_VERSION}
+      - API_HOST=http://server:7779
+      - SERVER_AUTH_HOST=http://clav-auth:7778
+    ports:
+      - 7779:8000
+      - 8000:8443
+      # admin
+      # 8001:8001
+      # 8002:8444
+    volumes:
+      - ${PWD}/kong/kong-dev.conf:/etc/kong/kong.conf
+      - ${PWD}/kong/kong-dev.yml.template:/usr/local/kong/declarative/kong.yml.template
+      - ${PWD}/beforeStartDev.sh:/beforeStartDev.sh
+      - ${PWD}/wait-for-it.sh:/wait-for-it.sh
+    command: /bin/bash -c "/wait-for-it.sh clav-auth:7778 -- /wait-for-it.sh server:7779 -- /beforeStartDev.sh && su - kong && kong start"
+volumes:
+  mongodb-data:
+    external: false
+    name: clav-mongodb-data
+  graphdb-data:
+    external: false
+    name: clav-graphdb-data

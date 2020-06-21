@@ -1,0 +1,107 @@
+_format_version: "1.1"
+
+services:
+  - name: acme-dummy
+    url: http://127.0.0.1:65535
+    routes:
+      - name: acme-dummy
+        paths:
+          - /.well-known/acme-challenge
+  - name: API
+    url: ${API_HOST}
+    routes:
+      - name: TodasRotas
+        paths:
+          - /
+    plugins:
+      - name: external-auth
+        config:
+          url: ${SERVER_AUTH_HOST}
+          path: /auth
+      - name: cors
+        service: API
+        config: 
+          origins:
+            - '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+            - OPTIONS
+          headers:
+            - Accept
+            - Authorization
+            - Cache-Control
+            - Content-Type
+            - DNT
+            - If-Modified-Since
+            - Keep-Alive
+            - Origin
+            - User-Agent
+            - X-Requested-With
+            - Content-Length
+          credentials: true
+      #é possível limitar por rota, basta associar o plugin a uma rota
+      - name: rate-limiting
+        config:
+          second: 10
+          policy: local
+      #faz cache de pedidos 200, 301 e 404, e verbos GET, HEAD em que a resposta é text/plain ou application/json
+      - name: proxy-cache
+        config:
+          cache_ttl: 3600 #segundos (1h) em cache
+          strategy: memory
+      - name: response-transformer
+        config:
+          remove:
+            headers:
+              - strict-transport-security
+              - x-dns-prefetch-control
+              - x-frame-options
+              - x-download-options
+              - x-content-type-options
+              - x-xss-protection
+              - x-powered-by
+              - content-security-policy
+          add:
+            headers:
+              - 'Strict-Transport-Security: max-age=31536000; includeSubDomains; preload'
+              - 'X-DNS-Prefetch-Control: off'
+              - 'X-Frame-Options: SAMEORIGIN'
+              - 'X-Download-Options: noopen'
+              - 'X-Content-Type-Options: nosniff'
+              - 'X-XSS-Protection: "1; mode=block"'
+              - "Content-Security-Policy: default-src 'none'"
+
+routes:
+  - name: docs
+    service: API
+    strip_path: false
+    paths:
+      - /$API_VERSION/docs
+    methods:
+      - GET
+    plugins:
+      - name: response-transformer
+        config:
+          remove:
+            headers:
+              - strict-transport-security
+              - x-dns-prefetch-control
+              - x-frame-options
+              - x-download-options
+              - x-content-type-options
+              - x-xss-protection
+              - x-powered-by
+              - content-security-policy
+          add:
+            headers:
+              - 'Strict-Transport-Security: max-age=31536000; includeSubDomains; preload'
+              - 'X-DNS-Prefetch-Control: off'
+              - 'X-Frame-Options: SAMEORIGIN'
+              - 'X-Download-Options: noopen'
+              - 'X-Content-Type-Options: nosniff'
+              - 'X-XSS-Protection: "1; mode=block"'
+              - "Content-Security-Policy: default-src 'self' $DOMAINS; img-src 'self' https://validator.swagger.io data: $DOMAINS; style-src 'self' 'unsafe-inline' $DOMAINS; script-src 'self' 'unsafe-inline' $DOMAINS"
