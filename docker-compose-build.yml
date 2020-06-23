@@ -49,7 +49,7 @@ services:
     image: redis:6.0
     container_name: clav_redis
     restart: always
-    command: redis-server --requirepass redisPass123
+    command: redis-server --requirepass redisPass123 --appendonly yes
     volumes:
       - acme-data:/data
   kong:
