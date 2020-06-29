@@ -47,7 +47,7 @@ git checkout kong
 git submodule update --init
 ```
 
-After that you need to get an GraphDB distribution, standalone server, (http://graphdb.ontotext.com/) and put them in the `graphdb` folder.
+After that you need to get an GraphDB distribution, the standalone server version, (http://graphdb.ontotext.com/) and put them in the `graphdb` folder.
 
 Change the GraphDB version in the env variable `GRAPHDB_VERSION` in `.env` file. This version should be the same as that comes with the name file (ex: `graphdb-free-8.11.0-dist.zip` as `free-8.11.0` as version)
 
@@ -89,7 +89,9 @@ The same applies to clav-graphdb-data wich have the graphdb data, so ontology, L
 ##### Ports
 
 In 7779 port runs the protected API with Kong. (http://localhost:7779)
+
 In 7778 port runs the unprotected API. (http://localhost:7778) Note: some requests can fail if it needs info from user token or from api key. In that cases you should use the protected version.
+
 In 7777 port runs the auth service. (http://localhost:7777)
 
 ##### Logs
@@ -132,7 +134,7 @@ rm -r CLAV2018/node_modules
 docker start clav_server
 ```
 
-For clav_auth:
+- For clav_auth:
 ```bash
 docker stop clav_auth
 rm -r CLAV-auth/node_modules
