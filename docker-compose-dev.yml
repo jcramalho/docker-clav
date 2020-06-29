@@ -31,6 +31,8 @@ services:
       - MONGODB=mongo
       - API_VERSION=${API_VERSION}
       - SERVER_AUTH_HOST=http://clav-auth:7778
+    ports:
+      - 7778:7779
   clav-auth:
     image: node:latest
     container_name: clav_auth
@@ -43,6 +45,8 @@ services:
       - NODE_ENV=development
       - API_VERSION=${API_VERSION}
       - API_HOST=http://server:7779
+    ports:
+      - 7777:7778
   kong:
     image: kong:2.0.4-ubuntu
     container_name: clav_kong
@@ -59,7 +63,7 @@ services:
       - SERVER_AUTH_HOST=http://clav-auth:7778
     ports:
       - 7779:8000
-      - 8000:8443
+      #- 8000:8443
       # admin
       # 8001:8001
       # 8002:8444
