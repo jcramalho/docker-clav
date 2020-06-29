@@ -172,3 +172,20 @@ The `start` command can take some time to run (it will install packages and star
 After a commit in a submodule (`CLAV2018` or `CLAV-auth`), you will need to make one commit too in `docker-clav` in order to update the pointer of submodule.
 
 After a new commit of another person in a submodule you need to run `git pull` in `docker-clav` (update pointer) and `git pull` in submodule folder to update content in that submodule.
+
+### `dev.sh` script
+
+```
+Usage: ./dev.sh {start|startd|stop|restart|updatePackages|build|rebuild|insertUser|help}
+    start                       Start dev containers
+    startd                      Start dev containers in background
+    stop                        Stop dev containers
+    restart <container>         Restart (stop and start) container
+    updatePackages {auth|api}   Restart and update packages
+    build                       Build images
+    build <service1> ...        Build image for service(s)
+    rebuild                     Rebuild (no-cache) images
+    rebuild <service1> ...      Rebuild (no-cache) image for service(s)
+    insertUser <name> <email>   Insert user in MongoDB running container
+    help                        Help
+```
