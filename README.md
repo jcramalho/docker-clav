@@ -72,6 +72,8 @@ The password is 'aaa'. You can after replace this password in API or interface.
 
 ### Writing code
 
+In order to changes appear in containers you should write the code in `CLAV2018` folder for API and in `CLAV-auth` folder for auth service.
+
 #### Start API
 
 To start API run:
@@ -117,7 +119,7 @@ docker logs clav_kong #for kong
 
 #### Code update
 
-When code changes and you want to make this changes be present in container run:
+If you want to make the code changes be present in container run:
 
 - Code changes in `CLAV2018`:
 ```bash
