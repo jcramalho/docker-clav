@@ -56,12 +56,16 @@ If you have an new ontology version, put it in the `graphdb` folder and update t
 You can you generate the graphdb image:
 ```bash
 docker-compose -f docker-compose-dev.yml build graphdb
+#or
+./dev.sh build graphdb
 ```
 
 When you start API for the first time you will need to insert a user with maximum level because MongoDB starts empty so if you want to make protected requests you need a user.
 To insert this user start containers first and then run: (replace <vars> with your values)
 ```bash
 docker exec -it clav_mongo mongo m51-clav --eval 'db.users.insertOne({"name" : "<name>", "email" : "<email>", "entidade" : "ent_DGLAB", "internal" : true, "level" : 7, "local" : { "password" : "$2a$14$r2aUyscEREvZYmuVumNuoea40o8q4wmDMHt2nEsqvJkYiLSMshyYC" }, "nCalls" : 0, "notificacoes" : [ ] })'
+#or
+./dev.sh insertUser <name> <email>
 ```
 
 The password is 'aaa'. You can after replace this password in API or interface.
@@ -73,11 +77,15 @@ The password is 'aaa'. You can after replace this password in API or interface.
 To start API run:
 ```bash
 docker-compose -f docker-compose-dev.yml up
+#or
+./dev.sh start
 ```
 
 And if you want it detached (in background) run:
 ```bash
 docker-compose -f docker-compose-dev.yml up -d
+#or
+./dev.sh startd
 ```
 
 ##### Volumes
@@ -115,12 +123,20 @@ When code changes and you want to make this changes be present in container run:
 ```bash
 docker stop clav_server
 docker start clav_server
+
+#or
+
+./dev.sh restart clav_server
 ```
 
 - Code changes in CLAV-auth:
 ```bash
 docker stop clav_auth
 docker start clav_auth
+
+#or
+
+./dev.sh restart clav_auth
 ```
 
 #### Packages update
@@ -132,6 +148,10 @@ When package.json or package-lock.json changes to make changes be present run:
 docker stop clav_server
 rm -r CLAV2018/node_modules
 docker start clav_server
+
+#or
+
+./dev.sh updatePackages api
 ```
 
 - For clav_auth:
@@ -139,9 +159,13 @@ docker start clav_server
 docker stop clav_auth
 rm -r CLAV-auth/node_modules
 docker start clav_auth
+
+#or
+
+./dev.sh updatePackages auth
 ```
 
-The last command can take some time to run (it will install packages and start the nodejs server).
+The `start` command can take some time to run (it will install packages and start the nodejs server).
 
 ### Commits
 
