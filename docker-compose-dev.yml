@@ -18,6 +18,9 @@ services:
     restart: always
     volumes:
       - graphdb-data:/opt/graphdb/home/data/repositories
+    command: "/opt/graphdb/dist/bin/graphdb -Dgraphdb.home=/opt/graphdb/home"
+    ports:
+      - 7200:7200
   server:
     image: node:latest
     container_name: clav_server

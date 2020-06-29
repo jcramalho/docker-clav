@@ -12,6 +12,7 @@ help(){
     echo "    rebuild                     Rebuild (no-cache) images"
     echo "    rebuild <service1> ...      Rebuild (no-cache) image for service(s)"
     echo "    insertUser <name> <email>   Insert user in MongoDB running container"
+    echo "    mongo                       Opens an Mongo Shell"
     echo "    help                        Help"
 }
 
@@ -71,6 +72,9 @@ case "$1" in
         echo $"Usage: $0 $1 <name> <email>"
         RETVAL=1
       fi
+    ;;
+   mongo)
+      docker exec -it clav_mongo mongo
     ;;
    help)
       help $0

@@ -14,9 +14,9 @@ In order to build the images you need to do first:
 
 Then you only need to run `docker-compose -f docker-compose-build.yml up`
 
-## Use already builded docker images
+## Use already built docker images
 
-If you want to use the already builded images you only need to run `docker-compose up`.
+If you want to use the already built images you only need to run `docker-compose up`.
 
 ## Some notes
 
@@ -29,14 +29,14 @@ This scripts allow to backup and restore the volumes of the docker containers cr
 If you have the containers running and you want to migrate you only need to:
 - Run backup script
 - Move the backup files to the new location
-- Create the containers buiding the images or using the already ones builded in the new location
+- Create the containers building the images or using the already ones built in the new location
 - Run the restore script in the new location
 
 ## Development guide
 
 ### Preparation
 
-First you shoud install the requirements.
+First you should install the requirements.
 
 Then you clone the git rep, change to `kong` branch and obtain the submodules content:
 
@@ -92,9 +92,9 @@ docker-compose -f docker-compose-dev.yml up -d
 
 ##### Volumes
 
-The volume `clav-mongodb-data` have users, pedidos, pendentes, etc, info so you should not remove this one, only if you realy want.
+The volume `clav-mongodb-data` have users, pedidos, pendentes, etc, info so you should not remove this one, only if you really want.
 
-The same applies to `clav-graphdb-data` wich have the graphdb data, ontology, LC, etc.
+The same applies to `clav-graphdb-data` which have the graphdb data, ontology, LC, etc.
 
 ##### Ports
 
@@ -103,6 +103,15 @@ In `7779` port runs the protected API with Kong. (http://localhost:7779)
 In `7778` port runs the unprotected API. (http://localhost:7778) Note: some requests can fail if it needs info from user token or from api key. In that cases you should use the protected version.
 
 In `7777` port runs the auth service. (http://localhost:7777)
+
+In `7200` port runs GraphDB Workbench. (http://localhost:7200)
+
+If you need a Mongo shell you can get one running: (clav_mongo container need to be running)
+```bash
+docker exec -it clav_mongo mongo
+#or
+./dev.sh mongo
+```
 
 ##### Logs
 
@@ -174,6 +183,23 @@ The `start` command can take some time to run (it will install packages and star
 After a commit in a submodule (`CLAV2018` or `CLAV-auth`), you will need to make one commit too in `docker-clav` in order to update the pointer of submodule.
 
 After a new commit of another person in a submodule you need to run `git pull` in `docker-clav` (update pointer) and `git pull` in submodule folder to update content in that submodule.
+
+### Pulls and Pushs
+
+The current submodules uses HTTPS instead of SSH. If you want to use SSH you need to run:
+```
+#assuming it is in the docker-clav folder
+
+cd CLAV2018
+git remote set-url origin git@github.com:jcramalho/CLAV2018.git
+
+cd ..
+
+cd CLAV-auth
+git remote set-url origin git@github.com:jcm300/CLAV-auth.git
+```
+
+**Do not change the submodules remote repository in `docker-clav`. Do not edit `.gitmodules` file in `docker-clav` folder. And if you change through `git config` do not run `git submodule sync`.**
 
 ### `dev.sh` script
 
