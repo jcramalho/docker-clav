@@ -106,7 +106,7 @@ In `7777` port runs the auth service. (http://localhost:7777)
 
 In `7200` port runs GraphDB Workbench. (http://localhost:7200)
 
-If you need a Mongo shell you can get one running: (clav_mongo container need to be running)
+If you need a Mongo shell you can get one running: (`clav_mongo` container need to be running)
 ```bash
 docker exec -it clav_mongo mongo
 #or
@@ -188,7 +188,7 @@ After a new commit of another person in a submodule you need to run `git pull` i
 
 The current submodules uses HTTPS instead of SSH. If you want to use SSH you need to run:
 ```
-#assuming it is in the docker-clav folder
+#assuming you are in the docker-clav folder
 
 cd CLAV2018
 git remote set-url origin git@github.com:jcramalho/CLAV2018.git
@@ -204,7 +204,7 @@ git remote set-url origin git@github.com:jcm300/CLAV-auth.git
 ### `dev.sh` script
 
 ```
-Usage: ./dev.sh {start|startd|stop|restart|updatePackages|build|rebuild|insertUser|help}
+Usage: ./dev.sh {start|startd|stop|restart|updatePackages|build|rebuild|insertUser|mongo|help}
     start                       Start dev containers
     startd                      Start dev containers in background
     stop                        Stop dev containers
@@ -215,5 +215,6 @@ Usage: ./dev.sh {start|startd|stop|restart|updatePackages|build|rebuild|insertUs
     rebuild                     Rebuild (no-cache) images
     rebuild <service1> ...      Rebuild (no-cache) image for service(s)
     insertUser <name> <email>   Insert user in MongoDB running container
+    mongo                       Opens an Mongo Shell
     help                        Help
 ```

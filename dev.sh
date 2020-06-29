@@ -1,7 +1,7 @@
 #!/bin/bash
 
 help(){
-    echo $"Usage: $0 {start|startd|stop|restart|updatePackages|build|rebuild|insertUser|help}"
+    echo $"Usage: $0 {start|startd|stop|restart|updatePackages|build|rebuild|insertUser|mongo|help}"
     echo "    start                       Start dev containers"
     echo "    startd                      Start dev containers in background"
     echo "    stop                        Stop dev containers"
