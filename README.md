@@ -51,9 +51,9 @@ After that you need to get an GraphDB distribution, the standalone server versio
 
 Change the GraphDB version in the env variable `GRAPHDB_VERSION` in `.env` file. This version should be the same as that comes with the name file (ex: `graphdb-free-8.11.0-dist.zip` as `free-8.11.0` as version)
 
-If you have an new ontology version, put it in the `graphdb` folder and update the en variable `GRAPHDB_DATA_FILE` in `.env` file.
+If you have an new ontology version, put it in the `graphdb` folder and update the env variable `GRAPHDB_DATA_FILE` in `.env` file.
 
-You can you generate the graphdb image:
+You can now generate the `graphdb` image:
 ```bash
 docker-compose -f docker-compose-dev.yml build graphdb
 #or
@@ -74,9 +74,9 @@ The password is 'aaa'. You can after replace this password in API or interface.
 
 In order to changes appear in containers you should write the code in `CLAV2018` folder for API and in `CLAV-auth` folder for auth service.
 
-#### Start API
+#### Start
 
-To start API run:
+To start the containers run:
 ```bash
 docker-compose -f docker-compose-dev.yml up
 #or
@@ -94,7 +94,7 @@ docker-compose -f docker-compose-dev.yml up -d
 
 The volume `clav-mongodb-data` have users, pedidos, pendentes, etc, info so you should not remove this one, only if you really want.
 
-The same applies to `clav-graphdb-data` which have the graphdb data, ontology, LC, etc.
+The same applies to `clav-graphdb-data` which have the GraphDB data, ontology, LC, etc.
 
 ##### Ports
 
