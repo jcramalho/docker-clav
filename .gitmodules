@@ -1,6 +1,6 @@
 [submodule "CLAV-auth"]
 	path = CLAV-auth
-	url = https://github.com/jcm300/CLAV-auth.git
+	url = https://github.com/jcramalho/CLAV-auth.git
 [submodule "CLAV2018"]
 	path = CLAV2018
 	url = https://github.com/jcramalho/CLAV2018.git
