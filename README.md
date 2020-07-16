@@ -41,7 +41,7 @@ First you should install the requirements.
 Then you clone the git rep, change to `kong` branch and obtain the submodules content:
 
 ```bash
-git clone https://github.com/jcm300/docker-clav.git
+git clone https://github.com/jcramalho/docker-clav.git
 cd docker-clav
 git checkout kong
 git submodule update --init
@@ -196,7 +196,7 @@ git remote set-url origin git@github.com:jcramalho/CLAV2018.git
 cd ..
 
 cd CLAV-auth
-git remote set-url origin git@github.com:jcm300/CLAV-auth.git
+git remote set-url origin git@github.com:jcramalho/CLAV-auth.git
 ```
 
 **Do not change the submodules remote repository in `docker-clav`. Do not edit `.gitmodules` file in `docker-clav` folder. And if you change through `git config` do not run `git submodule sync`.**
