@@ -50,7 +50,7 @@ services:
       #é possível limitar por rota, basta associar o plugin a uma rota
       - name: rate-limiting
         config:
-          second: 10
+          second: 50
           policy: local
       #faz cache de pedidos 200, 301 e 404, e verbos GET, HEAD em que a resposta é text/plain ou application/json
       - name: proxy-cache
