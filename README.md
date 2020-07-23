@@ -45,6 +45,16 @@ git clone https://github.com/jcramalho/docker-clav.git
 cd docker-clav
 git checkout kong
 git submodule update --init
+
+cd CLAV2018
+git checkout kong
+
+cd ..
+
+cd CLAV-auth
+git checkout master
+
+cd ..
 ```
 
 After that you need to get an GraphDB distribution, the standalone server version, (http://graphdb.ontotext.com/) and put them in the `graphdb` folder.
