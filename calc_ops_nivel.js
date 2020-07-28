@@ -1,7 +1,6 @@
 var permissions = require("./CLAV-auth/config/permissions.js")
 var fs = require("fs")
 var acesso = []
-var niveis = [1, 2, 3, 3.5, 4, 5, 6, 7]
 
 function getIndex(permission){
     return acesso.findIndex(e => permission == e.nivel);
@@ -56,9 +55,14 @@ function getRotaDesc(verbo, rota){
 
 acesso.push(buildNivel(-1, "Qualquer pessoa"))
 acesso.push(buildNivel(0, "Chaves API"))
-for(let nivel of niveis){
-    acesso.push(buildNivel(nivel, "Utilizador nível " + nivel))
-}
+acesso.push(buildNivel(1, "Representante Entidade"))
+acesso.push(buildNivel(2, "Utilizador Simples"))
+acesso.push(buildNivel(3, "Utilizador Avançado"))
+acesso.push(buildNivel(3.5, "Utilizador Validador (AD)"))
+acesso.push(buildNivel(4, "Utilizador Validador"))
+acesso.push(buildNivel(5, "Utilizador Decisor"))
+acesso.push(buildNivel(6, "Administrador de Perfil Funcional"))
+acesso.push(buildNivel(7, "Administrador de Perfil Tecnológico"))
 
 for(let verbo in permissions){
     for(let rota in permissions[verbo]){
