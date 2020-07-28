@@ -17,7 +17,7 @@ function buildNivel(nivel, desc){
 function buildRota(verbo, rota, desc){
     return {
         verbo: verbo,
-        rota: rota.replace(/\/\{api_version\}/g, ""),
+        path: rota.replace(/\/\{api_version\}/g, ""),
         desc: desc
     }
 }
