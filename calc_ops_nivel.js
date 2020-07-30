@@ -17,7 +17,7 @@ function buildNivel(nivel, desc){
 function buildRota(verbo, rota, desc){
     return {
         verbo: verbo,
-        path: rota.replace(/\/\{api_version\}/g, ""),
+        path: rota /*rota.replace(/\/\{api_version\}/g, "")*/,
         desc: desc
     }
 }
@@ -39,7 +39,7 @@ function getRotaDesc(verbo, rota){
                     desc = "Documentação da API de dados"
                     break
                 case "/(.*)":
-                    desc = "Ficheiros públicos da API de dados"
+                    desc = "Ficheiros estáticos públicos da API de dados"
                     break
                 default:
                     desc = ""

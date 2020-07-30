@@ -228,3 +228,7 @@ Usage: ./dev.sh {start|startd|stop|restart|updatePackages|build|rebuild|insertUs
     mongo                       Opens an Mongo Shell
     help                        Help
 ```
+
+### Troubleshooting
+
+If you installed the `CLAV-auth` and/or `CLAV2018` packages locally (outside the container), remove the `node_modules` folder from` CLAV-auth` and/or `CLAV2018`. If you do not remove the folder, it will likely generate errors and the API will not start.
