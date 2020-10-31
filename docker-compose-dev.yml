@@ -53,7 +53,7 @@ services:
     ports:
       - 7777:7778
   kong:
-    image: kong:2.0.4-ubuntu
+    image: kong:2.2.0-ubuntu
     container_name: clav_kong
     restart: always
     user: root
