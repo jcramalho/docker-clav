@@ -22,6 +22,11 @@ If you want to use the already built images you only need to run `docker-compose
 
 You can if you want, change the variables in `.env` file.
 
+To generate `accesso.json` of `CLAV2018` you can run in `docker-clav` folder:
+```
+node calc_ops_nivel.js > CLAV2018/public/permissoes_acesso/acesso.json
+```
+
 ## Backup and Restore scripts
 
 This scripts allow to backup and restore the volumes of the docker containers created with the docker-compose files. The backup script produces two tar files with the volumes data. The restore script use this two tar files to restore.
